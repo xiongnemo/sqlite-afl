@@ -4,7 +4,7 @@ This repository contains seed files and instructions for fuzzing the
 SQLite language parser and code generator using the
 American Fuzzy Lop (AFL) fuzzer.
 
-## Prerequesites
+## Prerequisites
 
   1.  The SQLite source tree available from <https://www.sqlite.org/src>
   2.  The latest version of AFL available from <http://lcamtuf.coredump.cx/afl>
