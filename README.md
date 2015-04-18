@@ -8,6 +8,8 @@ American Fuzzy Lop (AFL) fuzzer.
 
   1.  The SQLite source tree available from <https://www.sqlite.org/src>
   2.  The latest version of AFL available from <http://lcamtuf.coredump.cx/afl>
+  3.  The content of this repository either as a tarball, or preferably as
+      a [Fossil](https://www.fossil-scm.org/) clone.
 
 ## How To Run The Fuzzer
 
