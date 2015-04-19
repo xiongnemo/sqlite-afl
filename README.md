@@ -32,7 +32,7 @@ American Fuzzy Lop (AFL) fuzzer.
       directory:  cp ~/sqlite/sqlite3.[ch] .; cp ~/sqlite/tool/fuzzershell.c .
 
   8.  Build the instrumented fuzzershell:
-      ../afl-gcc -O3 -o sqlitefuzz -DSQLITE\_THREADSAFE=0 -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0 -DSQLITE\_NO\_SYNC -DSQLITE\_DEBUG -I. fuzzershell.c sqlite3.c -ldl
+      ../afl-gcc -O3 -o sqlitefuzz -DSQLITE\_THREADSAFE=0 -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0 -DSQLITE\_NO\_SYNC -DSQLITE\_DEBUG -DSQLITE\_ENABLE\_FTS4 -DSQLITE\_ENABLE\_RTREE -I. fuzzershell.c sqlite3.c -ldl
 
   9.  Make an output directory:  rm -rf out; mkdir out
 
@@ -41,6 +41,9 @@ American Fuzzy Lop (AFL) fuzzer.
 
   11.  Run the fuzzer:
        ../afl-fuzz -i minimized\_culled -o out -x ../testcases/\_extra/sql -- ./sqlitefuzz
+
+  12.  If the fuzzer stops for any reason (for example to update "fuzzershell.c" to a new version)
+       then it can be restated by changing the "-i minimized\_culled" argument to just "-i-".
 
 ## Acknowledgements
 
