@@ -32,7 +32,19 @@ American Fuzzy Lop (AFL) fuzzer.
       directory:  cp ~/sqlite/sqlite3.[ch] .; cp ~/sqlite/tool/fuzzershell.c .
 
   8.  Build the instrumented fuzzershell:
-      ../afl-gcc -O3 -o sqlitefuzz -DSQLITE\_THREADSAFE=0 -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0 -DSQLITE\_NO\_SYNC -DSQLITE\_DEBUG -DSQLITE\_ENABLE\_FTS4 -DSQLITE\_ENABLE\_RTREE -I. fuzzershell.c sqlite3.c -ldl
+      ../afl-gcc -O3 -o sqlitefuzz -DSQLITE\_THREADSAFE=0 -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0 -DSQLITE\_NO\_SYNC -DSQLITE\_DEBUG -DSQLITE\_ENABLE\_FTS4 -DSQLITE\_ENABLE\_RTREE -DSQLITE\_OMIT\_RANDOMNESS -I. fuzzershell.c sqlite3.c -ldl
+
+      -  Set -DSQLITE\_DEBUG to enable assert() statements.
+
+      -  Set -DSQLITE\_OMIT\_RANDOMNESS to cause SQLite's PRNG to be seeded the
+         same way on every run, so that the AFL fuzzer does not see variance
+         between runs using the same input.
+
+      -  The -DSQLITE\_NO\_SYNC is probably not needed since fuzzershell never
+         writes to disk.  But it does not hurt.
+
+      -  The -DSQLITE\_THREADSAFE=0 and -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0
+         options preclude the need for linking with -ldl and -lpthreads
 
   9.  Make an output directory:  rm -rf out; mkdir out
 
@@ -40,12 +52,16 @@ American Fuzzy Lop (AFL) fuzzer.
        export set AFL\_SKIP\_CPUFREQ=1
 
   11.  Run the fuzzer:
-       ../afl-fuzz -i minimized\_culled -o out -x ../testcases/\_extras/sql -- ./sqlitefuzz
+       ../afl-fuzz -i cull2 -o out -x ../testcases/\_extras/sql -- ./sqlitefuzz
 
-  12.  If the fuzzer stops for any reason (for example to update "fuzzershell.c" to a new version)
-       then it can be restated by changing the "-i minimized\_culled" argument to just "-i-".
+       -  The original test vector set designed by Michal Zalewski is in the
+          "minimized\_culled" directory.  This can be substituted in place
+          of "cull2" if desired.
+
+  12.  If the fuzzer stops for any reason (for example to update
+       "fuzzershell.c" to a new version) then it can be restated by changing
+       the "-i cull2" argument to just "-i-".
 
 ## Acknowledgements
 
-  *  Michal Zalewski wrote AFL and supplied the "minimized\_culled" seed files
-     that make up the bulk of this repo.
+  *  Michal Zalewski wrote AFL and supplied the "minimized\_culled" seed files.
