@@ -62,6 +62,17 @@ American Fuzzy Lop (AFL) fuzzer.
        "fuzzershell.c" to a new version) then it can be restated by changing
        the "-i cull2" argument to just "-i-".
 
+## Database File Fuzzing
+
+The procedure above fuzzes SQL input.  To fuzz the database file format,
+change step (11) to be the following:
+
+  *   Run the fuzzer:
+       ../afl-fuzz -i dbfuzz -o out -f testdb -- ./sqlitefuzz --database testdb db-fuzz-ck.txt
+
+The seed database file in the dbfuzz directory are created using
+the db-fuzz-init.txt SQL script.
+
 ## Acknowledgements
 
   *  Michal Zalewski wrote AFL and supplied the "minimized\_culled" seed files.
