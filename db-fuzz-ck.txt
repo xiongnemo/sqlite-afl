@@ -1,4 +1,6 @@
 PRAGMA quick_check;
+SELECT * FROM t2;
+SELECT * FROM t3;
 CREATE TABLE tx(x,y);
 INSERT INTO tx SELECT a, b FROM t2;
 UPDATE t2 SET b=b+1;
