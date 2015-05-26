@@ -32,7 +32,7 @@ American Fuzzy Lop (AFL) fuzzer.
       directory:  cp ~/sqlite/sqlite3.[ch] .; cp ~/sqlite/tool/fuzzershell.c .
 
   8.  Build the instrumented fuzzershell:
-      ../afl-gcc -O3 -o sqlitefuzz -DSQLITE\_THREADSAFE=0 -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0 -DSQLITE\_NO\_SYNC -DSQLITE\_DEBUG -DSQLITE\_ENABLE\_FTS4 -DSQLITE\_ENABLE\_RTREE -DSQLITE\_OMIT\_RANDOMNESS -I. fuzzershell.c sqlite3.c -ldl
+      ../afl-gcc -O3 -o fuzzershell -DSQLITE\_THREADSAFE=0 -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0 -DSQLITE\_NO\_SYNC -DSQLITE\_DEBUG -DSQLITE\_ENABLE\_FTS4 -DSQLITE\_ENABLE\_RTREE -DSQLITE\_OMIT\_RANDOMNESS -I. fuzzershell.c sqlite3.c -ldl
 
       -  Set -DSQLITE\_DEBUG to enable assert() statements.
 
@@ -52,7 +52,7 @@ American Fuzzy Lop (AFL) fuzzer.
        export set AFL\_SKIP\_CPUFREQ=1
 
   11.  Run the fuzzer:
-       ../afl-fuzz -i cull2 -o out -x ../testcases/\_extras/sql -- ./sqlitefuzz
+       ../afl-fuzz -i cull2 -o out -x ../testcases/\_extras/sql -- ./fuzzershell
 
        -  The original test vector set designed by Michal Zalewski is in the
           "minimized\_culled" directory.  This can be substituted in place
@@ -68,7 +68,7 @@ The procedure above fuzzes SQL input.  To fuzz the database file format,
 change step (11) to be the following:
 
   *   Run the fuzzer:
-       ../afl-fuzz -i dbfuzz -o out -f testdb -- ./sqlitefuzz --database testdb db-fuzz-ck.txt
+       ../afl-fuzz -i dbfuzz -o out -f testdb -- ./fuzzershell --database testdb db-fuzz-ck.txt
 
 The seed database file in the dbfuzz directory are created using
 the db-fuzz-init.txt SQL script.
