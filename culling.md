@@ -19,8 +19,9 @@ This document overviews the steps for culling the test cases.
 
   3.  Run afl-cmin on to generate the culled output.  Two examples are
       below.  The first example is for database fuzzing and the second
-      is for SQL fuzzing.
+      is for SQL fuzzing.  In the first example, take care that the argument
+      to -f is different from the -f argument of a running ../afl-fuzz.
 
-         ../afl-cmin -i tmp1 -o cull1 -f testdb -- ./fuzzershell --database testdb db-fuzz-ck.txt
+         ../afl-cmin -i tmp1 -o cull1 -f culldb -- ./fuzzershell --database culldb db-fuzz-ck.txt
 
          ../afl-cmin -i tmp1 -o cull1 -- ./fuzzershell
