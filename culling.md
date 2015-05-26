@@ -22,6 +22,6 @@ This document overviews the steps for culling the test cases.
       is for SQL fuzzing.  In the first example, take care that the argument
       to -f is different from the -f argument of a running ../afl-fuzz.
 
-         ../afl-cmin -i tmp1 -o cull1 -f culldb -- ./fuzzershell --database culldb db-fuzz-ck.txt
+         ../afl-cmin -t 20 -i tmp1 -o cull1 -f culldb -- ./fuzzershell --database culldb db-fuzz-ck.txt
 
-         ../afl-cmin -i tmp1 -o cull1 -- ./fuzzershell
+         ../afl-cmin -t 20 -i tmp1 -o cull1 -- ./fuzzershell
