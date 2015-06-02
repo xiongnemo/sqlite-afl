@@ -25,3 +25,22 @@ This document overviews the steps for culling the test cases.
          ../afl-cmin -t 20 -i tmp1 -o cull1 -f culldb -- ./fuzzershell --database culldb db-fuzz-ck.txt
 
          ../afl-cmin -t 20 -i tmp1 -o cull1 -- ./fuzzershell
+
+# Loading culled content into fuzzdataN.db files
+
+After culling test cases, they can to be loaded into one of the test/fuzzdataN.db
+files of the [main SQLite source repository](http://www.sqlite.org/src) so that they
+are rerun during normal testing.  For SQL tests, create the new database as follows:
+
+         fuzzcheck f1.db --load-sql cull1/*
+         fuzzcheck f1.db -m 'Comment here'
+
+For Database tests, use the following commands:
+
+         fuzzcheck f1.db --load-sql db-fuzz-ck.txt
+         fuzzcheck f1.db --load-db cull1/*
+         fuzzcheck f1.db -m 'Comment here'
+
+After creating the new database f1.db (and testing it using "fuzzcheck f1.db")
+copy it into the appropriately named fuzzdataN.db file in test/ of the main
+repository and commit.
