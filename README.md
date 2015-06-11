@@ -60,7 +60,10 @@ American Fuzzy Lop (AFL) fuzzer.
 
   12.  If the fuzzer stops for any reason (for example to update
        "fuzzershell.c" to a new version) then it can be restated by changing
-       the "-i cull2" argument to just "-i-".
+       the "-i cull2" argument to just "-i-".  Example:
+
+       -  ../afl-fuzz -i- -o out -x ../testcases/\_extras/sql -- ./fuzzershell
+
 
 ## Database File Fuzzing
 
@@ -69,6 +72,10 @@ change step (11) to be the following:
 
   *   Run the fuzzer:
        ../afl-fuzz -i dbfuzz -o out -f testdb -- ./fuzzershell --database testdb db-fuzz-ck.txt
+
+  *   Use the -i- trick to restart the fuzzer:
+       ../afl-fuzz -i- -o out -f testdb -- ./fuzzershell --database testdb db-fuzz-ck.txt
+
 
 The seed database file in the dbfuzz directory are created using
 the db-fuzz-init.txt SQL script.
