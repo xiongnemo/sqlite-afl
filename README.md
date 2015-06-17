@@ -1,7 +1,6 @@
 # Fuzzing SQLite Using AFL
 
-This repository contains seed files and instructions for fuzzing the
-SQLite language parser and code generator using the
+This repository contains seed files and instructions for fuzzing using the
 American Fuzzy Lop (AFL) fuzzer.
 
 ## Prerequisites
@@ -68,7 +67,7 @@ American Fuzzy Lop (AFL) fuzzer.
 ## Database File Fuzzing
 
 The procedure above fuzzes SQL input.  To fuzz the database file format,
-change step (11) to be the following:
+change steps (11) and (12) to be the following:
 
   *   Run the fuzzer:
        ../afl-fuzz -i dbfuzz -o out -f testdb -- ./fuzzershell --database testdb db-fuzz-ck.txt
