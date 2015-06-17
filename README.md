@@ -16,7 +16,7 @@ American Fuzzy Lop (AFL) fuzzer.
 
   2.  cd into ~/afl and type "make"
 
-  3.  Create a subdirecctory ~/afl/sqlite
+  3.  Create a subdirectory ~/afl/sqlite
 
   4.  cd into ~/afl/sqlite and open this repository:
       fossil open ~/repos/afl-sqlite.fossil
