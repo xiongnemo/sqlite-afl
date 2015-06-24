@@ -24,10 +24,13 @@ This document overviews the steps for culling the test cases.
 
          ../afl-cmin -i tmp1 -o cull1 -f culldb -- ./fuzzershell --database culldb db-fuzz-ck.txt
 
-         ../afl-cmin -i tmp1 -o cull1 -- ./fuzzershell
+         ../afl-cmin -t 20 -i tmp1 -o cull1 -- ./fuzzershell
 
-      Note that the timeout option (-t) is omitted.  This helps to capture
-      cases that cause infinite loops.
+      Note that the timeout option (-t) is omitted from the database fuzz
+      cases to help capture cases that cause infinite loops.  But a timeout
+      is included in SQL fuzz cases to suppress SQL statements (such as 
+      unbounded recursive common table expressions) that really are suppose 
+      to run forever.
 
 # Loading culled content into fuzzdataN.db files
 
