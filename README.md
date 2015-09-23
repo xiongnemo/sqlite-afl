@@ -33,6 +33,8 @@ American Fuzzy Lop (AFL) fuzzer.
   8.  Build the instrumented fuzzershell:
       ../afl-gcc -O3 -o fuzzershell -DSQLITE\_THREADSAFE=0 -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0 -DSQLITE\_NO\_SYNC -DSQLITE\_DEBUG -DSQLITE\_ENABLE\_FTS4 -DSQLITE\_ENABLE\_RTREE -DSQLITE\_OMIT\_RANDOMNESS -I. fuzzershell.c sqlite3.c -ldl
 
+      -  <b>Easier alternative:</b> run "sh get-files.sh; sh rebuild-main.sh"
+
       -  Set -DSQLITE\_DEBUG to enable assert() statements.
 
       -  Set -DSQLITE\_OMIT\_RANDOMNESS to cause SQLite's PRNG to be seeded the
@@ -57,11 +59,16 @@ American Fuzzy Lop (AFL) fuzzer.
           "minimized\_culled" directory.  This can be substituted in place
           of "cull2" if desired.
 
+       -  Used the "json-cases" directory instead of "cull2"/"minimized\_culled"
+          and omit the -x option if testing the json1.c extension
+
   12.  If the fuzzer stops for any reason (for example to update
        "fuzzershell.c" to a new version) then it can be restated by changing
        the "-i cull2" argument to just "-i-".  Example:
 
        -  ../afl-fuzz -i- -o out -x ../testcases/\_extras/sql -- ./fuzzershell
+
+       -  Omit the -x option when testing json1.c
 
 
 ## Database File Fuzzing
