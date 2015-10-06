@@ -33,7 +33,7 @@ American Fuzzy Lop (AFL) fuzzer.
   8.  Build the instrumented fuzzershell:
       ../afl-gcc -O3 -o fuzzershell -DSQLITE\_THREADSAFE=0 -DSQLITE\_ENABLE\_LOAD\_EXTENSION=0 -DSQLITE\_NO\_SYNC -DSQLITE\_DEBUG -DSQLITE\_ENABLE\_FTS4 -DSQLITE\_ENABLE\_RTREE -DSQLITE\_OMIT\_RANDOMNESS -I. fuzzershell.c sqlite3.c -ldl
 
-      -  <b>Easier alternative:</b> run "sh get-files.sh; sh rebuild-main.sh"
+      -  <b>Easier alternative:</b> sh get-files.sh; sh rebuild-main.sh
 
       -  Set -DSQLITE\_DEBUG to enable assert() statements.
 
@@ -53,7 +53,7 @@ American Fuzzy Lop (AFL) fuzzer.
        export set AFL\_SKIP\_CPUFREQ=1
 
   11.  Run the fuzzer:
-       ../afl-fuzz -i cull2 -o out -x ../testcases/\_extras/sql -- ./fuzzershell
+       ../afl-fuzz -i cull2 -o out -T sql -x ../testcases/\_extras/sql.dict -- ./fuzzershell
 
        -  The original test vector set designed by Michal Zalewski is in the
           "minimized\_culled" directory.  This can be substituted in place
@@ -66,9 +66,11 @@ American Fuzzy Lop (AFL) fuzzer.
        "fuzzershell.c" to a new version) then it can be restated by changing
        the "-i cull2" argument to just "-i-".  Example:
 
-       -  ../afl-fuzz -i- -o out -x ../testcases/\_extras/sql -- ./fuzzershell
+       -  ../afl-fuzz -i- -o out -T sql -x ../testcases/\_extras/sql.dict -- ./fuzzershell
 
        -  Omit the -x option when testing json1.c
+
+       -  <b>Easier alternative:</b> sh rerun-sql.sh
 
 
 ## Database File Fuzzing
@@ -77,10 +79,13 @@ The procedure above fuzzes SQL input.  To fuzz the database file format,
 change steps (11) and (12) to be the following:
 
   *   Run the fuzzer:
-       ../afl-fuzz -i dbfuzz -o out -f testdb -- ./fuzzershell --database testdb db-fuzz-ck.txt
+       ../afl-fuzz -i dbfuzz -o out -f testdb -T db -- ./fuzzershell --database testdb db-fuzz-ck.txt
 
   *   Use the -i- trick to restart the fuzzer:
-       ../afl-fuzz -i- -o out -f testdb -- ./fuzzershell --database testdb db-fuzz-ck.txt
+       ../afl-fuzz -i- -o out -f testdb -T db -- ./fuzzershell --database testdb db-fuzz-ck.txt
+
+  *   <b>Easier alternative:</b> sh rerun-db.sh
+
 
 
 The seed database file in the dbfuzz directory are created using
