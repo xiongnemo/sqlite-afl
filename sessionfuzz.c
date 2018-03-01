@@ -207,14 +207,17 @@ int main(int argc, char **argv){
     sqlite3session_delete(pSess);
   }else
   if( strcmp(zCmd, "run")==0 ){
-    if( argc!=3 ){
+    int i;
+    if( argc<3 ){
       fprintf(stdout, "Wrong number of arguments.\n%s", zHelp);
       exit(1);
     }
-    readFile(argv[2], &pChgset, &nChgset);
-    rc = sqlite3changeset_apply(db, nChgset, pChgset, 0, conflictCallback, 0);
-    printf("sqlite3hangeset_apply() returns %d\n", rc);
-    sqlite3_free(pChgset);
+    for(i=2; i<argc; i++){
+      readFile(argv[i], &pChgset, &nChgset);
+      rc = sqlite3changeset_apply(db, nChgset, pChgset, 0, conflictCallback, 0);
+      printf("sqlite3hangeset_apply(%s) returns %d\n", argv[i], rc);
+      sqlite3_free(pChgset);
+    }
   }else
   {
     fprintf(stderr, "%s", zHelp);
