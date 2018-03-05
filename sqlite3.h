@@ -125,7 +125,7 @@ extern "C" {
 */
 #define SQLITE_VERSION        "3.23.0"
 #define SQLITE_VERSION_NUMBER 3023000
-#define SQLITE_SOURCE_ID      "2018-03-01 22:18:26 5b01b9914fb612ceece34f40d45c7eb97c3504fc5a0a5ff0e67120bdee67f6ee"
+#define SQLITE_SOURCE_ID      "2018-03-05 21:19:57 6274cf1f397d36be9e9b65b1935a776c834e4512e0e89f82c132efd4d1e8ef82"
 
 /*
 ** CAPI3REF: Run-Time Library Version Numbers
@@ -8979,7 +8979,7 @@ typedef struct sqlite3_session sqlite3_session;
 /*
 ** CAPI3REF: Changeset Iterator Handle
 **
-** An instance of this object is as as a cursor for iterating
+** An instance of this object acts as a cursor for iterating
 ** over the elements of a [changeset] or [patchset].
 */
 typedef struct sqlite3_changeset_iter sqlite3_changeset_iter;
