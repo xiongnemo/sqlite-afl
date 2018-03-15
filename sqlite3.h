@@ -125,7 +125,7 @@ extern "C" {
 */
 #define SQLITE_VERSION        "3.23.0"
 #define SQLITE_VERSION_NUMBER 3023000
-#define SQLITE_SOURCE_ID      "2018-03-05 21:19:57 6274cf1f397d36be9e9b65b1935a776c834e4512e0e89f82c132efd4d1e8ef82"
+#define SQLITE_SOURCE_ID      "2018-03-14 15:25:43 48a06eb02b42a021b835ff9766535805723259b9701b87fb17fa488b133cb53a"
 
 /*
 ** CAPI3REF: Run-Time Library Version Numbers
@@ -7230,6 +7230,15 @@ SQLITE_API int sqlite3_db_status(sqlite3*, int op, int *pCur, int *pHiwtr, int r
 ** highwater mark associated with SQLITE_DBSTATUS_CACHE_WRITE is always 0.
 ** </dd>
 **
+** [[SQLITE_DBSTATUS_CACHE_SPILL]] ^(<dt>SQLITE_DBSTATUS_CACHE_SPILL</dt>
+** <dd>This parameter returns the number of dirty cache entries that have
+** been written to disk in the middle of a transaction due to the page
+** cache overflowing. Transactions are more efficient if they are written
+** to disk all at once. When pages spill mid-transaction, that introduces
+** additional overhead. This parameter can be used help identify
+** inefficiencies that can be resolve by increasing the cache size.
+** </dd>
+**
 ** [[SQLITE_DBSTATUS_DEFERRED_FKS]] ^(<dt>SQLITE_DBSTATUS_DEFERRED_FKS</dt>
 ** <dd>This parameter returns zero for the current value if and only if
 ** all foreign key constraints (deferred or immediate) have been
@@ -7249,7 +7258,8 @@ SQLITE_API int sqlite3_db_status(sqlite3*, int op, int *pCur, int *pHiwtr, int r
 #define SQLITE_DBSTATUS_CACHE_WRITE          9
 #define SQLITE_DBSTATUS_DEFERRED_FKS        10
 #define SQLITE_DBSTATUS_CACHE_USED_SHARED   11
-#define SQLITE_DBSTATUS_MAX                 11   /* Largest defined DBSTATUS */
+#define SQLITE_DBSTATUS_CACHE_SPILL         12
+#define SQLITE_DBSTATUS_MAX                 12   /* Largest defined DBSTATUS */
 
 
 /*
@@ -8731,7 +8741,6 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_recover(sqlite3 *db, const c
 
 /*
 ** CAPI3REF: Serialize a database
-** EXPERIMENTAL
 **
 ** The sqlite3_serialize(D,S,P,F) interface returns a pointer to memory
 ** that is a serialization of the S database on [database connection] D.
@@ -8751,7 +8760,7 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_recover(sqlite3 *db, const c
 ** are made, and the sqlite3_serialize() function will return a pointer
 ** to the contiguous memory representation of the database that SQLite
 ** is currently using for that database, or NULL if the no such contiguous
-** memory representation of the database exists.  A contigous memory
+** memory representation of the database exists.  A contiguous memory
 ** representation of the database will usually only exist if there has
 ** been a prior call to [sqlite3_deserialize(D,S,...)] with the same
 ** values of D and S.
@@ -8762,6 +8771,9 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_recover(sqlite3 *db, const c
 ** A call to sqlite3_serialize(D,S,P,F) might return NULL even if the
 ** SQLITE_SERIALIZE_NOCOPY bit is omitted from argument F if a memory
 ** allocation error occurs.
+**
+** This interface is only available if SQLite is compiled with the
+** [SQLITE_ENABLE_DESERIALIZE] option.
 */
 SQLITE_API unsigned char *sqlite3_serialize(
   sqlite3 *db,           /* The database connection */
@@ -8772,13 +8784,22 @@ SQLITE_API unsigned char *sqlite3_serialize(
 
 /*
 ** CAPI3REF: Flags for sqlite3_serialize
-** EXPERIMENTAL
+**
+** Zero or more of the following constants can be OR-ed together for
+** the F argument to [sqlite3_serialize(D,S,P,F)].
+**
+** SQLITE_SERIALIZE_NOCOPY means that [sqlite3_serialize()] will return
+** a pointer to contiguous in-memory database that it is currently using,
+** without making a copy of the database.  If SQLite is not currently using
+** a contiguous in-memory database, then this option causes
+** [sqlite3_serialize()] to return a NULL pointer.  SQLite will only be
+** using a contiguous in-memory database if it has been initialized by a
+** prior call to [sqlite3_deserialize()].
 */
 #define SQLITE_SERIALIZE_NOCOPY 0x001   /* Do no memory allocations */
 
 /*
 ** CAPI3REF: Deserialize a database
-** EXPERIMENTAL
 **
 ** The sqlite3_deserialize(D,S,P,N,M,F) interface causes the 
 ** [database connection] D to disconnection from database S and then
@@ -8802,6 +8823,9 @@ SQLITE_API unsigned char *sqlite3_serialize(
 ** If sqlite3_deserialize(D,S,P,N,M,F) fails for any reason and if the 
 ** SQLITE_DESERIALIZE_FREEONCLOSE bit is set in argument F, then
 ** [sqlite3_free()] is invoked on argument P prior to returning.
+**
+** This interface is only available if SQLite is compiled with the
+** [SQLITE_ENABLE_DESERIALIZE] option.
 */
 SQLITE_API int sqlite3_deserialize(
   sqlite3 *db,            /* The database connection */
@@ -8814,10 +8838,24 @@ SQLITE_API int sqlite3_deserialize(
 
 /*
 ** CAPI3REF: Flags for sqlite3_deserialize()
-** EXPERIMENTAL
 **
-** The following are allowed values for the 6th argument (the "flags" or "F"
-** argument) of the [sqlite3_deserialize()] interface.
+** The following are allowed values for 6th argument (the F argument) to
+** the [sqlite3_deserialize(D,S,P,N,M,F)] interface.
+**
+** The SQLITE_DESERIALIZE_FREEONCLOSE means that the database serialization
+** in the P argument is held in memory obtained from [sqlite3_malloc64()]
+** and that SQLite should take ownership of this memory and automatically
+** free it when it has finished using it.  Without this flag, the caller
+** is resposible for freeing any dynamically allocated memory.
+**
+** The SQLITE_DESERIALIZE_RESIZEABLE flag means that SQLite is allowed to
+** grow the size of the database usign calls to [sqlite3_realloc64()].  This
+** flag should only be used if SQLITE_DESERIALIZE_FREEONCLOSE is also used.
+** Without this flag, the deserialized database cannot increase in size beyond
+** the number of bytes specified by the M parameter.
+**
+** The SQLITE_DESERIALIZE_READONLY flag means that the deserialized database
+** should be treated as read-only.
 */
 #define SQLITE_DESERIALIZE_FREEONCLOSE 1 /* Call sqlite3_free() on close */
 #define SQLITE_DESERIALIZE_RESIZEABLE  2 /* Resize using sqlite3_realloc64() */
