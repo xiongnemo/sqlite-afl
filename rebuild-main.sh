@@ -16,3 +16,5 @@ OPTS="$OPTS -DSQLITE_OMIT_RANDOMNESS"
 OPTS="$OPTS -DSQLITE_ENABLE_JSON1"
 ../afl-gcc -O3 -g -o $OBJ $OPTS -I. $SRC -ldl
 ls -l $OBJ
+gcc -O3 -g -o $OBJ.gcc $OPTS -I. $SRC -ldl
+ls -l $OBJ.gcc
