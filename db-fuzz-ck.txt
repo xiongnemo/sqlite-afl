@@ -1,5 +1,6 @@
 BEGIN;
 PRAGMA quick_check;
+SELECT sum(length(name)) FROM dbstat;
 SELECT * FROM t2;
 SELECT * FROM t3;
 CREATE TABLE tx(x,y);
